@@ -1,0 +1,12 @@
+{
+    "default_paths" : {
+        "video_path" : "C:\\Users\\jansw\\Documents\\Simulation\\Rowing-Simulation\\Pose_Estimation\\Data_Aquisition",
+        "vid_txt_path" : "C:\\Users\\jansw\\Documents\\Simulation\\Rowing-Simulation\\App_Dev\\NiceGUI"
+    },
+    
+    "default_options": {
+        "display": false,
+        "verbose": true,
+        "write_video": false
+    }
+}

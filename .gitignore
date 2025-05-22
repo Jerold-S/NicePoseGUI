@@ -174,4 +174,4 @@ cython_debug/
 .pypirc
 
 # Pose Estimation Models
-.pt
+*.pt

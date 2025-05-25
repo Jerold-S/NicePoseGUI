@@ -97,7 +97,8 @@ def RowMech_PoseEstimation():
                 queue=queue,
                 save_path=video_path.replace(
                     video_name.split('.')[-1], f'_pose_{opt_modelSelect.value}.mp4') if opt_WriteVideo.value else None,
-                conf=0.5, device='cuda',
+                conf=0.5, 
+                device='cuda' if opt_GpuCpu.value else 'cpu',
                 show=opt_display.value, verbose=opt_Verbose.value
             )
 
@@ -155,6 +156,7 @@ def RowMech_PoseEstimation():
     with ui.row(align_items='center'):
         ui.label("Select Model:").classes("text-lg")
         opt_modelSelect = ui.select(yolo_models, value=yolo_models[0])
+        opt_GpuCpu = ui.switch('GPU', value=True)
         opt_display = ui.switch("Display", value=False)
         opt_Verbose = ui.switch("Verbose", value=True)
         opt_WriteVideo = ui.switch("Write Video", value=False)

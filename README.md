@@ -22,7 +22,7 @@ The JSON format looks like this:
                 "x" : [101, 102, 103, "..."],
                 "y" : [104, 105, 106, "..."]
             },
-            etc...
+            {"etc..."}
         },
         "name2" : {
             "L_Ankle" : {"..."}

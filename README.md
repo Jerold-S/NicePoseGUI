@@ -7,25 +7,25 @@ NicePoseGUI provides an interface to select videos, indicate which individuals s
 The JSON format looks like this:
 ```JSON
 {
-    "video" : original video name,
-    "model" : model used to generate data,
-    "framerate" : framerate of video,
+    "video" : "original video name",
+    "model" : "model used to generate data",
+    "framerate" : "framerate of video",
     "points" : {
         "name1" : {
             "L_Ankle": {
-                "c" : [0.1, 0.2, 0.3, ...],
-                "x" : [101, 102, 103, ...],
-                "y" : [104, 105, 106, ...]
+                "c" : [0.1, 0.2, 0.3, "..."],
+                "x" : [101, 102, 103, "..."],
+                "y" : [104, 105, 106, "..."]
             },
             "R_Ankle" : {
-                "c" : [0.1, 0.2, 0.3, ...],
-                "x" : [101, 102, 103, ...],
-                "y" : [104, 105, 106, ...]
+                "c" : [0.1, 0.2, 0.3, "..."],
+                "x" : [101, 102, 103, "..."],
+                "y" : [104, 105, 106, "..."]
             },
             etc...
         },
         "name2" : {
-            "L_Ankle" : {...}
+            "L_Ankle" : {"..."}
         }
     }
 }

@@ -7,7 +7,7 @@ from PIL import Image
 from multiprocessing import Manager, Queue
 import utils
 
-os.chdir(os.path.dirname(__file__))
+# os.chdir(os.path.dirname(__file__))
 
 settings_path = "NicePoseGUI_Settings.json"
 with open(settings_path, "r") as settings_file:
@@ -27,7 +27,7 @@ def RowMech_PoseEstimation():
 
     async def add_video_to_table():
         paths = await utils.local_file_picker('../../Pose_Estimation/Data_Aquisition', multiple=True,
-                                        extension_filter=('.mp4', '.avi', '.mov', '.MOV', '.AVI', 'MP4'))
+                                              extension_filter=('.mp4', '.avi', '.mov', '.MOV', '.AVI', 'MP4'))
         if paths is None:
             return
         else:
@@ -56,17 +56,60 @@ def RowMech_PoseEstimation():
                 video_table.run_method('scrollTo', len(video_table.rows)-1)
                 video_table.update()
 
-    def select_people(row : list, table: ui.table):
-        row['progress'] = 'Selecting...'
-        table.update()
+    async def select_people(table: ui.table, selected: bool = False):
+        """Select people in the selected videos using YOLOv8 tracking.
 
-        selected_ids, names = utils.select_people(row, opt_modelSelect.value + '.pt')
+        :param table: The table containing video information.
+        :param selected: If True, only process selected rows; otherwise, process all rows.
+        :return: None
+        """
+        # Check some videos are in table or selected
+        if selected and len(table.selected) == 0:
+            ui.notify("No videos selected", color="negative")
+            return
+        elif not selected and len(table.rows) == 0:
+            ui.notify("No videos in table", color="negative")
+            return
+        elif selected and len(table.selected):
+            rows = table.selected
+        else:
+            rows = table.rows
+        # Cycle through video rows and run Person Selection
+        for row in rows:
+            row['progress'] = 'Selecting...'
+            table.update()
 
-        row["ids"] = ",".join([":".join([id, name])
-                                   for id, name in zip(map(str, selected_ids), names)])
+            video_name = row['video']
+            video_folder_path = row['path']
+            video_path = '\\'.join([video_folder_path, video_name])
 
-        row['progress'] = ''
-        table.update()
+            cap = cv2.VideoCapture(video_path)
+            success, frame = cap.read()
+            if not success:
+                ui.notify(f'Error reading video Path: {video_path}', type='warning')
+                return
+
+            model = YOLO(opt_modelSelect.value + '.pt')
+
+            result = model.track(
+                source=frame,
+                show=False,
+                device='cuda' if opt_GpuCpu.value else 'cpu',
+                save=False,
+                show_boxes=False)[0]
+
+            selected_ids, names = await utils.PersonSelectionDialog(
+                image=Image.fromarray(cv2.cvtColor(result.plot(), cv2.COLOR_BGR2RGB)),
+                boxes=result.boxes.xyxy.numpy(),
+                ids=result.boxes.id.numpy(),
+                name=video_name.split('.')[0]
+            )
+
+            row["ids"] = ",".join([":".join([id, name])
+                                    for id, name in zip(map(str, selected_ids), names)])
+
+            row['progress'] = ''
+            table.update()
 
     async def run_pose_detection(vid_table: ui.table):
         # Check some videos are in table
@@ -97,15 +140,15 @@ def RowMech_PoseEstimation():
                 queue=queue,
                 save_path=video_path.replace(
                     video_name.split('.')[-1], f'_pose_{opt_modelSelect.value}.mp4') if opt_WriteVideo.value else None,
-                conf=0.5, 
+                conf=0.5,
                 device='cuda' if opt_GpuCpu.value else 'cpu',
                 show=opt_display.value, verbose=opt_Verbose.value
             )
 
             with open('\\'.join([
                 folder_path,
-                 video_name.replace('.mp4', f'_pose_{opt_modelSelect.value}.json')
-                 ]), "w") as file:
+                video_name.replace('.mp4', f'_pose_{opt_modelSelect.value}.json')
+            ]), "w") as file:
                 json.dump(output, file, cls=utils.JSONEncoder, indent=4)
 
             row['progress'] = "Done"
@@ -125,8 +168,8 @@ def RowMech_PoseEstimation():
 
     with ui.dropdown_button("Video Options", icon="menu", color="secondary"):
         ui.item("Delete Selected Videos", on_click=lambda: delete_selected_rows(video_table))
-        ui.item("Select People in Selected Videos", 
-                on_click=lambda: [select_people(row, video_table) for row in video_table.selected])
+        ui.item("Select People in Selected Videos",
+                on_click=lambda: select_people(video_table, selected=True))
 
     ui.separator()
 
@@ -161,8 +204,8 @@ def RowMech_PoseEstimation():
         opt_Verbose = ui.switch("Verbose", value=True)
         opt_WriteVideo = ui.switch("Write Video", value=False)
 
-    ui.button("Select People", icon="group", on_click=lambda e: [select_people(row, video_table) for row in video_table.rows] )
-    
+    ui.button("Select People", icon="group", on_click=lambda e: select_people(video_table))
+
     with ui.row(align_items='center'):
         ui.button("Run Pose Detection", icon="play_arrow",
                   on_click=lambda e: run_pose_detection(video_table))

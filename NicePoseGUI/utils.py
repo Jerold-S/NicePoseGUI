@@ -104,44 +104,6 @@ class PersonSelectionDialog(ui.dialog):
         self.close()
         self.clear()
 
-async def select_people(row : ui.row, model : str) -> tuple[list[int], list[str]]:
-    """
-    Use information from row of table to select people from a video.
-
-    :param ui.row row: Row of table, containing 'path' and 'video' keys.
-    :param str model: Model file to be used for detection.
-    :return: A tuple containing a list of selected IDs and a list of names.
-    :rtype: tuple[list[int], list[str]]
-    """
-    video_name = row['video']
-    video_folder_path = row['path']
-    video_path = '\\'.join([video_folder_path, video_name])
-
-    cap = cv2.VideoCapture(video_path)
-    success, frame = cap.read()
-    if not success:
-        ui.notify(f'Error reading video Path: {video_path}', type='warning')
-        return
-
-    model = YOLO(model)
-
-    result = await run.cpu_bound(
-                model.track,
-                source=frame,
-                show=False,
-                debice='cpu',
-                save=False,
-                show_boxes=False)[0]
-    
-    selected_ids, names = await PersonSelectionDialog(
-                image=Image.fromarray(cv2.cvtColor(result.plot(), cv2.COLOR_BGR2RGB)),
-                boxes=result.boxes.xyxy.numpy(),
-                ids=result.boxes.id.numpy(),
-                name=video_name.split('.')[0]
-            )
-
-    return selected_ids, names
-
 
 def run_yolo(video_path: str, model_name: str,
              ids: list[int], names: list[str],

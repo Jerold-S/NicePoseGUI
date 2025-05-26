@@ -3,3 +3,5 @@ ultralytics
 numpy
 opencv-python
 pillow
+# Required for windows compatibility
+pywin32; platform_system == "Windows"

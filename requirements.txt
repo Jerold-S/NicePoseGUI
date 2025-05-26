@@ -1,7 +1,9 @@
 pandas
 ultralytics
+nicegui
 numpy
 opencv-python
 pillow
+lap
 # Required for windows compatibility
 pywin32; platform_system == "Windows"

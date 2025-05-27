@@ -30,3 +30,11 @@ The JSON format looks like this:
     }
 }
 ```
+
+## Installation
+[Pytorch](https://pytorch.org/get-started/locally/) will need to be installed prior to installing the rest of the requirements (`pip install -r requirements.txt`). For the sake of speed and compatibility, it is recommended to use one of the CUDA compatile versions so that GPU compute can be used. GPU compute tends to be ~25x faster than running on CPU.
+
+## Use Guide
+1. Select videos to run pose estimation on.
+2. Select individuals from each video to track. When selected, a green box will appear around the individual.
+3. Run Pose Estimation. Progress will be shown on the table of selected videos. Progress bar at the bottom of the table indicates progress on the video currently being worked on.

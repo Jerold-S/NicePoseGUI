@@ -1,10 +1,9 @@
 from nicegui import ui, run
 from ultralytics import YOLO
-import os
 import json
 import cv2
 from PIL import Image
-from multiprocessing import Manager, Queue
+from multiprocessing import Manager
 import utils
 
 # os.chdir(os.path.dirname(__file__))

@@ -1,12 +1,13 @@
 from nicegui import ui, run
 from ultralytics import YOLO
 import json
+import os
 import cv2
 from PIL import Image
 from multiprocessing import Manager
 import utils
 
-# os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(__file__))
 
 settings_path = "NicePoseGUI_Settings.json"
 with open(settings_path, "r") as settings_file:
@@ -25,7 +26,7 @@ def RowMech_PoseEstimation():
     queue = Manager().Queue()
 
     async def add_video_to_table():
-        paths = await utils.local_file_picker('../../Pose_Estimation/Data_Aquisition', multiple=True,
+        paths = await utils.local_file_picker('..', multiple=True,
                                               extension_filter=('.mp4', '.avi', '.mov', '.MOV', '.AVI', 'MP4'))
         if paths is None:
             return
@@ -189,7 +190,7 @@ def RowMech_PoseEstimation():
     ).props("virtual-scroll").classes("h-72 w-3/4")
 
     prog_bar = ui.linear_progress(show_value=False, color="secondary",
-                                  value=0).classes("w-1/2")
+                                  value=0).classes("w-1/2").props('instant-feedback')
     ui.timer(0.1, lambda: prog_bar.set_value(queue.get() if not queue.empty() else prog_bar.value))
 
     ui.separator()

@@ -3,6 +3,7 @@ ultralytics
 nicegui
 numpy
 opencv-python
+pywebview
 pillow
 lap
 # Required for windows compatibility

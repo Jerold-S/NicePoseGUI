@@ -104,6 +104,14 @@ class PersonSelectionDialog(ui.dialog):
         self.close()
         self.clear()
 
+def yolo_single(frame, model_name : str):
+    model = YOLO(model_name)
+    result = model.track(frame,
+                         show=False,
+                        #  device='cuda' if opt_GpuCpu.value else 'cpu',
+                        save=False,
+                        show_boxes=False)[0]
+    return result
 
 def run_yolo(video_path: str, model_name: str,
              ids: list[int], names: list[str],

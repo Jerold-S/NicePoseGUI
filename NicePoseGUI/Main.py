@@ -88,15 +88,12 @@ def RowMech_PoseEstimation():
             if not success:
                 ui.notify(f'Error reading video Path: {video_path}', type='warning')
                 return
-
-            model = YOLO(opt_modelSelect.value + '.pt')
-
-            result = model.track(
-                source=frame,
-                show=False,
-                device='cuda' if opt_GpuCpu.value else 'cpu',
-                save=False,
-                show_boxes=False)[0]
+            
+            result = await run.cpu_bound(
+                utils.yolo_single,
+                frame=frame,
+                model_name=opt_modelSelect.value + '.pt'
+            )
 
             selected_ids, names = await utils.PersonSelectionDialog(
                 image=Image.fromarray(cv2.cvtColor(result.plot(), cv2.COLOR_BGR2RGB)),
@@ -163,7 +160,10 @@ def RowMech_PoseEstimation():
         ui.label("Add Video from path:").classes("text-lg")
         vid_path_in = ui.input(placeholder="Video Location")
         ui.button("Add Video", icon='add', color="secondary",
-                  on_click=lambda: video_table.add_row({"video": vid_path_in.value.split('\\')[-1], "path": vid_path_in.value}))
+                  on_click=lambda: video_table.add_row({
+                        "video": vid_path_in.value.split('\\')[-1],
+                        "path": '\\'.join(vid_path_in.value.strip().split('\\')[:-1])
+                    }))
         # ui.image("NicePoseGUI.png").classes("w-1/6 absolute-top-right")
 
     with ui.dropdown_button("Video Options", icon="menu", color="secondary"):

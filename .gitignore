@@ -175,3 +175,6 @@ cython_debug/
 
 # Pose Estimation Models
 *.pt
+
+# VS Code
+.vscode/

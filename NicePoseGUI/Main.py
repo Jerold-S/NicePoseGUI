@@ -211,4 +211,4 @@ def RowMech_PoseEstimation():
                   on_click=lambda e: run_pose_detection(video_table))
 
 
-ui.run(native=True, frameless=False, title='NicePoseGUI', window_size=(1600, 900))
+ui.run(title='NicePoseGUI')

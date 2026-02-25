@@ -13,7 +13,7 @@ settings_path = "NicePoseGUI_Settings.json"
 with open(settings_path, "r") as settings_file:
     settings_json = json.load(settings_file)
 
-yolo_models = ["yolo11x-pose", "yolov8x-pose"]
+yolo_models = ["yolo26x-pose", "yolo11x-pose", "yolov8x-pose",]
 
 
 async def delete_selected_rows(table: ui.table):
@@ -144,7 +144,7 @@ def RowMech_PoseEstimation():
 
             with open('\\'.join([
                 folder_path,
-                video_name.replace('.mp4', f'_pose_{opt_modelSelect.value}.json')
+                f"{os.path.splitext(video_name)[0]}_pose_{opt_modelSelect.value}.json"
             ]), "w") as file:
                 json.dump(output, file, cls=utils.JSONEncoder, indent=4)
 

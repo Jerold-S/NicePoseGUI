@@ -5,6 +5,7 @@ A [NiceGUI](https://nicegui.io/) wrapper for tracking individuals in videos usin
 NicePoseGUI provides an interface to select videos, indicate which individuals should be tracked and have their joint positions recorded and then outputs the data for the selected indivudals in a simple json format.
 
 ## Installation
+As it is currently setup, Python versions 3.11 & 3.12 should work - 3.13 and 3.14 will not support running app in separate window (pywebview will not install).
 [Pytorch](https://pytorch.org/get-started/locally/) will need to be installed prior to installing the rest of the requirements (`pip install -r requirements.txt`). For the sake of speed and compatibility, it is recommended to use one of the CUDA compatile versions of Pytorch so that GPU compute can be used. CUDA can be sourced from the [Nvidia site](https://developer.nvidia.com/cuda-downloads). NicePoseGUI has only been tested using GPU compute - performance will likley be severely compromised if using CPU compute to process videos.
 
 ## Use Guide

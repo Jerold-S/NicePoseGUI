@@ -128,7 +128,7 @@ def RowMech_PoseEstimation():
             prog_bar.set_value(0)
             prog_bar.update()
 
-            # Run YOLOv8 inference on the video
+            # Run ultralytics YOLO pose estimation in a separate process to avoid blocking the UI
             print(opt_modelSelect.value)
             output = await run.cpu_bound(
                 utils.run_yolo,
@@ -191,7 +191,15 @@ def RowMech_PoseEstimation():
 
     prog_bar = ui.linear_progress(show_value=False, color="secondary",
                                   value=0).classes("w-1/2").props('instant-feedback')
-    ui.timer(0.1, lambda: prog_bar.set_value(queue.get() if not queue.empty() else prog_bar.value))
+
+    def update_progress():
+        latest = None
+        while not queue.empty():
+            latest = queue.get_nowait()
+        if latest is not None:
+            prog_bar.set_value(latest)
+
+    ui.timer(0.25, update_progress)
 
     ui.separator()
 
